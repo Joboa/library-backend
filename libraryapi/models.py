@@ -9,14 +9,19 @@ db = SQLAlchemy()
 
 class Book(db.Model):
     __tablename__ = 'books'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
+    edition = db.Column(db.String(255))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return dict(id=self.id,
                     title=self.title,
-                    created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'))
+                    edition=self.edition,
+                    created_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                    updated_at=self.created_at.strftime('%Y-%m-%d %H:%M:%S'))
 
 
 class Journal(db.Model):
@@ -40,16 +45,16 @@ class Journal(db.Model):
         return ""
 
     def generate_authors(self):
-        self.first_author = self.get_last_name(self.first_author)
-        self.second_author = self.get_last_name(self.second_author)
-        self.last_author = self.get_last_name(self.last_author)
+        f_author = self.get_last_name(self.first_author)
+        s_author = self.get_last_name(self.second_author)
+        l_author = self.get_last_name(self.last_author)
 
-        if self.first_author != "" and self.second_author != "" and self.last_author != "":
-            self.authors_shorten = self.first_author + " " + "et" + " .al"
-        elif self.first_author != "" and self.second_author != "":
-            self.authors_shorten = self.first_author + " and " + self.second_author
+        if f_author != "" and s_author != "" and l_author != "":
+            self.authors_shorten = f_author + " " + "et" + " .al"
+        elif f_author != "" and s_author != "":
+            self.authors_shorten = f_author + " and " + s_author
         else:
-            self.authors_shorten = self.first_author
+            self.authors_shorten = f_author
         return self.authors_shorten
 
     def __init__(self, **kwargs):

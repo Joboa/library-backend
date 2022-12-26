@@ -2,56 +2,22 @@
 Data classes for the libraryapi application
 """
 from datetime import datetime
-import validators
-from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-
-from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
 
 class User(db.Model):
-    # __tablename__ = 'users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255))
+    username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    books = db.relationship('Book', backref="user")
-    journals = db.relationship('Journal', backref="user")
+    books = db.relationship('Book', backref="users")
+    journals = db.relationship('Journal', backref="users")
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
-
-    def __init__(self, email, username, password):
-        self.email = email
-        self.username = username
-        self.password = generate_password_hash(password, method='sha256')
-
-    @classmethod
-    def authenticate(cls, **kwargs):
-        username = kwargs.get('username')
-        email = kwargs.get('email')
-        password = kwargs.get('password')
-
-        # validations
-        if not email or not password:
-            return jsonify({"error": "Username and Password are required"})
-
-        if len(password) < 6:
-            return jsonify({"error": "Password is too short"}), 400
-
-        if len(username) < 3:
-            return jsonify({"error": "Username is too short"}), 400
-
-        if not validators.email(email):
-            return jsonify({"error": "Email is not valid"}), 400
-
-        user = cls.query.filter_by(email=email).first()
-        if not user or not check_password_hash(user.password, password):
-            return None
-
-        return user
 
     def to_dict(self):
         return dict(id=self.id, username=self.username, email=self.email)
@@ -64,7 +30,7 @@ class Book(db.Model):
     title = db.Column(db.String(255), nullable=False)
     edition = db.Column(db.String(255))
     book_type = db.Column(db.String(255))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 
@@ -90,7 +56,7 @@ class Journal(db.Model):
     last_author = db.Column(db.String(255))
     authors_shorten = db.Column(db.Text)
     url_to_journal = db.Column(db.Text)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
 

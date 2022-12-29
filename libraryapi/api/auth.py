@@ -44,7 +44,8 @@ def register():
     return jsonify({
         "message": "User created",
         "user": {
-            "username": username, "email": email
+            "username": username, "email": email, "is_admin": user.is_admin,
+            "is_user": user.is_user, "id": user.id
         }
     }), 201
 
@@ -68,6 +69,9 @@ def login():
                     "access": access,
                     "username": user.username,
                     "email": user.email,
+                    "is_admin": user.is_admin,
+                    "is_user": user.is_user,
+                    "id": user.id
                 }
             }), 200
 

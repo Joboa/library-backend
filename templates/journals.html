@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Journals Table</h3>
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Posted By</th>
+      <th scope="col">Journal ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Publisher</th>
+      <th scope="col">Publication Date</th>
+      <th scope="col">Authors</th>
+      <th scope="col">URL</th>
+
+
+    </tr>
+  </thead>
+{% if users %}
+{% for user in users %}
+  <tbody>
+    {% for journal in user.journals %}
+    <tr>
+      <th scope="row">{{ user.username }}</th>
+      <td>{{ journal.id }}</td>
+      <td>{{ journal.title }}</td>
+      <td>{{ journal.publisher }}</td>
+      <td>{{ journal.publication_date }}</td>
+      <td>{{ journal.authors_shorten }}</td>
+      <td>{{ journal.url_to_journal }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  {% endfor %}
+  {% endif %}
+
+{% endblock %}

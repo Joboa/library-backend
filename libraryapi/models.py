@@ -3,11 +3,13 @@ Data classes for the libraryapi application
 """
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -18,6 +20,14 @@ class User(db.Model):
     journals = db.relationship('Journal', backref="users")
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+    
+    @property
+    def is_admin(self):
+        return self.id == 1
+
+    @property
+    def is_user(self):
+        return self.id != 1
 
     def to_dict(self):
         return dict(id=self.id, username=self.username, email=self.email)

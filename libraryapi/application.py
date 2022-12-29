@@ -6,11 +6,15 @@ from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
+from flask_bootstrap import Bootstrap4
 
-from libraryapi.models import db
+from libraryapi.models import db, User
+from admin_page.admin import admin
 from libraryapi.api import auth, books, journals
 
 migrate = Migrate()
+login_manager = LoginManager()
 
 
 def create_app(app_name='LIBRARY_API'):
@@ -28,10 +32,21 @@ def create_app(app_name='LIBRARY_API'):
     # json web tokens
     JWTManager(app)
 
+    # flask login manager
+    login_manager.init_app(app)
+    login_manager.login_view = 'admin.login'
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
+
     # register apps
+    app.register_blueprint(admin)
     app.register_blueprint(auth.auth)
     app.register_blueprint(books.books)
     app.register_blueprint(journals.journals)
+    
+    bootstrap = Bootstrap4(app)
 
     # handle application errors
     # url error

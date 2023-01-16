@@ -19,22 +19,22 @@ def register():
     email = request.json['email']
     password = request.json['password']
 
-    if len(password) < 6:
-        return jsonify({"error": "Password is too short"}), 400
-
     if len(username) < 3:
-        return jsonify({"error": "Username is too short"}), 400
+        return jsonify({"username_error": "Username is too short"}), 400
 
     if not validators.email(email):
-        return jsonify({"error": "Email is not valid"}), 400
+        return jsonify({"email_error": "Email is not valid"}), 400
+
+    if len(password) < 6:
+        return jsonify({"password_error": "Password is too short"}), 400
 
     # check is user.email already exist
     if User.query.filter_by(email=email).first() is not None:
-        return jsonify({"error": "Email is taken"}), 409
+        return jsonify({"user_error": "Email is already taken"}), 409
 
     # check is user.username already exist
     if User.query.filter_by(username=username).first() is not None:
-        return jsonify({"error": "User already exist"}), 409
+        return jsonify({"user_error": "User already exist"}), 409
 
     password_hash = generate_password_hash(password, method='sha256')
     user = User(username=username, password=password_hash, email=email)

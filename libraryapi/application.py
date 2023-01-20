@@ -23,7 +23,7 @@ def create_app(app_name='LIBRARY_API'):
     app.config.from_object('libraryapi.config.BaseConfig')
 
     # Allow cross-origin
-    cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, origins=["http://localhost:3000"])
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}}, origins=["http://localhost:3000","https://j-library.netlify.app/"])
 
     # database setup
     db.init_app(app)

@@ -1,1 +1,1 @@
-FLASK_APP=runserver
+FLASK_APP=app

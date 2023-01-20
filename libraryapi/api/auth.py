@@ -75,7 +75,7 @@ def login():
                 }
             }), 200
 
-    return jsonify({"error": "Incorrect credentials"}), 401
+    return jsonify({"user_error": "Incorrect credentials"}), 401
 
 
 @auth.get('/me/')
